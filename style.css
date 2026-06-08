@@ -1,4 +1,6 @@
-/* Configurações Globais */
+/* ==========================================================================
+   1. RESET, VARIÁVEIS E CONFIGURAÇÕES GLOBAIS
+   ========================================================================== */
 * {
     margin: 0;
     padding: 0;
@@ -14,6 +16,10 @@
     --dark: #212529;
     --light: #f8f9fa;
     --white: #ffffff;
+    --error: #c62828;
+    --error-light: #ffcdd2;
+    --success: #2e7d32;
+    --success-light: #c8e6c9;
 }
 
 body {
@@ -29,28 +35,16 @@ body {
 }
 
 .section {
-    padding: 80px 0;
+    padding: 60px 0;
 }
 
-.bg-light {
-    background-color: var(--light);
+.hidden {
+    display: none !important;
 }
 
-h2 {
-    font-size: 2.2rem;
-    color: var(--primary-dark);
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-.subtitle {
-    font-size: 1.1rem;
-    color: #6c757d;
-    text-align: center;
-    margin-bottom: 50px;
-}
-
-/* Cabeçalho e Menu Hamburguer */
+/* ==========================================================================
+   2. CABEÇALHO E NAVEGAÇÃO
+   ========================================================================== */
 header {
     background-color: var(--white);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
@@ -76,26 +70,6 @@ header {
     color: var(--dark);
 }
 
-.menu-toggle {
-    display: none;
-    flex-direction: column;
-    justify-content: space-between;
-    width: 30px;
-    height: 21px;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    z-index: 1100;
-}
-
-.menu-toggle .bar {
-    height: 3px;
-    width: 100%;
-    background-color: var(--dark);
-    border-radius: 10px;
-    transition: all 0.3s ease;
-}
-
 .nav-menu ul {
     display: flex;
     list-style: none;
@@ -106,7 +80,6 @@ header {
     text-decoration: none;
     color: var(--dark);
     font-weight: 600;
-    font-size: 1rem;
     transition: color 0.2s;
 }
 
@@ -114,11 +87,13 @@ header {
     color: var(--primary);
 }
 
-/* Banner Principal */
+/* ==========================================================================
+   3. HERO BANNER (DESTAQUE)
+   ========================================================================== */
 .hero {
     background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), 
                 url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=1200') no-repeat center center/cover;
-    height: 75vh;
+    height: 40vh;
     display: flex;
     align-items: center;
     color: var(--white);
@@ -126,104 +101,223 @@ header {
 }
 
 .hero-content h1 {
-    font-size: 3.5rem;
-    margin-bottom: 20px;
+    font-size: 3rem;
+    margin-bottom: 10px;
     font-weight: 800;
 }
 
 .hero-content p {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     max-width: 700px;
-    margin: 0 auto 35px auto;
+    margin: 0 auto;
 }
 
-.btn {
+/* ==========================================================================
+   4. ESTRUTURA DO QUIZ INTERATIVO
+   ========================================================================== */
+.quiz-container {
+    max-width: 750px;
+    margin: 0 auto;
+    background: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.08);
+    padding: 40px;
+    border-top: 6px solid var(--primary);
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 8px;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    margin-bottom: 25px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 10%;
+    background-color: var(--primary);
+    transition: width 0.3s ease;
+}
+
+#num-pergunta {
+    text-align: left;
+    font-size: 1.2rem;
+    color: var(--primary);
+    margin-bottom: 5px;
+}
+
+#texto-pergunta {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    color: var(--dark);
+}
+
+.alternativas-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.btn-alternativa {
+    width: 100%;
+    padding: 15px 20px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: var(--white);
+    font-size: 1rem;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-alternativa:hover:not(:disabled) {
+    background-color: #f1f8e9;
+    border-color: var(--accent);
+}
+
+.btn-alternativa:disabled {
+    cursor: not-allowed;
+}
+
+/* Tela de Feedback de Resultados */
+#quiz-resultado {
+    text-align: center;
+}
+
+#quiz-resultado h2 {
+    color: var(--primary-dark);
+    margin-bottom: 15px;
+}
+
+#quiz-resultado p {
+    font-size: 1.25rem;
+    margin-bottom: 20px;
+}
+
+.feedback-box {
+    background-color: #e8f5e9;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.feedback-box p:first-child {
+    font-weight: 600;
+    color: var(--primary-dark);
+}
+
+.feedback-box p:last-child {
+    font-size: 0.95rem;
+    margin-top: 5px;
+    color: #555;
+}
+
+/* Dica de navegação por teclado */
+.teclado-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 25px;
+    font-size: 0.9rem;
+    color: #6c757d;
+    background: #f1f3f5;
+    padding: 10px;
+    border-radius: 6px;
+}
+
+.key-cap {
+    background: #ffffff;
+    border: 2px solid #adb5bd;
+    border-bottom: 4px solid #adb5bd;
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-weight: bold;
+    color: var(--dark);
+}
+
+/* ==========================================================================
+   5. MINI GAME DO TRATOR (CANVAS)
+   ========================================================================== */
+.game-wrapper {
+    display: none; /* Controlado dinamicamente via JS (Função liberarJogo) */
+    text-align: center;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.game-wrapper h2 {
+    color: var(--primary-dark);
+    margin-bottom: 10px;
+}
+
+.game-wrapper p {
+    color: #6c757d;
+    margin-bottom: 25px;
+}
+
+#gameCanvas {
+    background-color: #8d6e63; /* Cor de terra/campo */
+    border: 4px solid var(--primary-dark);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    display: block;
+    margin: 20px auto;
+    max-width: 100%;
+}
+
+.game-instructions {
+    background-color: #fff3e0;
+    border-left: 4px solid #ff9800;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.score-container {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.score-container span {
+    color: var(--primary);
+}
+
+.game-controls {
+    margin-top: 15px;
+}
+
+/* ==========================================================================
+   6. COMPONENTES DE INTERAÇÃO (BOTÕES E RODAPÉ)
+   ========================================================================== */
+.btn-acao {
     background-color: var(--primary);
     color: var(--white);
-    padding: 14px 35px;
-    text-decoration: none;
-    border-radius: 30px;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 25px;
+    font-size: 1rem;
     font-weight: 600;
+    cursor: pointer;
     box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3);
-    transition: background 0.2s, transform 0.2s;
+    transition: all 0.2s;
 }
 
-.btn:hover {
+.btn-acao:hover {
     background-color: var(--primary-dark);
     transform: translateY(-2px);
 }
 
-/* Grid de Cards */
-.grid-cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 30px;
-}
-
-.card {
-    background: var(--white);
-    padding: 35px 25px;
-    border-radius: 12px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.04);
-    border-top: 5px solid var(--primary);
+footer {
+    background-color: var(--light);
     text-align: center;
-    transition: transform 0.3s;
+    padding: 30px 0;
+    margin-top: 60px;
+    border-top: 1px solid #e9ecef;
+    color: #6c757d;
 }
-
-.card:hover {
-    transform: translateY(-5px);
-}
-
-.card-icon {
-    font-size: 2.5rem;
-    margin-bottom: 15px;
-}
-
-.card h3 {
-    margin-bottom: 15px;
-    color: var(--primary-dark);
-}
-
-/* Menu de Tópicos (Accordion) */
-.menu-topicos-container {
-    max-width: 800px;
-}
-
-.accordion-item {
-    background-color: var(--white);
-    margin-bottom: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-    overflow: hidden;
-}
-
-.accordion-header {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-    background: none;
-    border: none;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--dark);
-    text-align: left;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.accordion-header:hover {
-    background-color: #f1f3f5;
-}
-
-.accordion-header .icon {
-    font-size: 1.3rem;
-    color: var(--primary);
-    transition: transform 0.3s;
-}
-
-.accordion-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease-
