@@ -3,426 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carbonização do Campo - Agrinho 2026</title>
-    <style>
-        /* ==========================================================================
-           1. ESTILOS GLOBAIS E ESTRUTURA (Baseados no seu CSS original)
-           ========================================================================== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            scroll-behavior: smooth;
-        }
-
-        :root {
-            --primary: #2e7d32;
-            --primary-dark: #1b5e20;
-            --accent: #a5d6a7;
-            --dark: #212529;
-            --light: #f8f9fa;
-            --white: #ffffff;
-            --error: #c62828;
-            --error-light: #ffcdd2;
-            --success: #2e7d32;
-            --success-light: #c8e6c9;
-        }
-
-        body {
-            color: var(--dark);
-            background-color: var(--white);
-            line-height: 1.6;
-        }
-
-        .container {
-            width: 90%;
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        .section {
-            padding: 60px 0;
-        }
-
-        header {
-            background-color: var(--white);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .header-flex {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .logo span {
-            color: var(--dark);
-        }
-
-        .nav-menu ul {
-            display: flex;
-            list-style: none;
-            gap: 30px;
-        }
-
-        .nav-menu a {
-            text-decoration: none;
-            color: var(--dark);
-            font-weight: 600;
-            transition: color 0.2s;
-        }
-
-        .nav-menu a:hover {
-            color: var(--primary);
-        }
-
-        /* Hero Banner */
-        .hero {
-            background: linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), 
-                        url('https://images.unsplash.com/photo-1500937386664-56d1dfef3854?q=80&w=1200') no-repeat center center/cover;
-            height: 40vh;
-            display: flex;
-            align-items: center;
-            color: var(--white);
-            text-align: center;
-        }
-
-        .hero-content h1 { font-size: 3rem; margin-bottom: 10px; font-weight: 800; }
-        .hero-content p { font-size: 1.2rem; max-width: 700px; margin: 0 auto; }
-
-        /* ==========================================================================
-           2. ESTILOS DO QUIZ INTERATIVO
-           ========================================================================== */
-        .quiz-container {
-            max-width: 750px;
-            margin: 0 auto;
-            background: var(--white);
-            border-radius: 12px;
-            box-shadow: 0 6px 25px rgba(0,0,0,0.08);
-            padding: 40px;
-            border-top: 6px solid var(--primary);
-        }
-
-        .progress-bar-container {
-            width: 100%;
-            height: 8px;
-            background-color: #e0e0e0;
-            border-radius: 4px;
-            margin-bottom: 25px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 100%;
-            width: 10%;
-            background-color: var(--primary);
-            transition: width 0.3s ease;
-        }
-
-        .alternativas-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .btn-alternativa {
-            width: 100%;
-            padding: 15px 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            background-color: var(--white);
-            font-size: 1rem;
-            text-align: left;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .btn-alternativa:hover:not(:disabled) {
-            background-color: #f1f8e9;
-            border-color: var(--accent);
-        }
-
-        .btn-alternativa:disabled { cursor: not-allowed; }
-
-        /* Dica de navegação por teclado */
-        .teclado-info {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 25px;
-            font-size: 0.9rem;
-            color: #6c757d;
-            background: #f1f3f5;
-            padding: 10px;
-            border-radius: 6px;
-        }
-
-        .key-cap {
-            background: #ffffff;
-            border: 2px solid #adb5bd;
-            border-bottom: 4px solid #adb5bd;
-            border-radius: 4px;
-            padding: 2px 8px;
-            font-weight: bold;
-            color: var(--dark);
-        }
-
-        /* ==========================================================================
-           3. ESTILOS DO MINI GAME DO TRATOR
-           ========================================================================== */
-        .game-wrapper {
-            display: none; /* Oculto até o término do quiz */
-            text-align: center;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        #gameCanvas {
-            background-color: #8d6e63; /* Cor de terra/campo */
-            border: 4px solid var(--primary-dark);
-            border-radius: 8px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-            display: block;
-            margin: 20px auto;
-            max-width: 100%;
-        }
-
-        .game-instructions {
-            background-color: #fff3e0;
-            border-left: 4px solid #ff9800;
-            padding: 15px;
-            border-radius: 4px;
-            margin-bottom: 15px;
-            text-align: left;
-        }
-
-        .btn-acao {
-            background-color: var(--primary);
-            color: var(--white);
-            padding: 12px 30px;
-            border: none;
-            border-radius: 25px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3);
-            transition: all 0.2s;
-        }
-
-        .btn-acao:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-
-        footer {
-            background-color: var(--light);
-            text-align: center;
-            padding: 30px 0;
-            margin-top: 60px;
-            border-top: 1px solid #e9ecef;
-            color: #6c757d;
-        }
-
-        .hidden { display: none !important; }
-    </style>
+    <title>Carbonização no Campo</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <header>
-        <div class="container header-flex">
-            <div class="logo">Agrinho <span>2026</span></div>
-            <nav class="nav-menu">
-                <ul>
-                    <li><a href="#quiz-section">Desafio Quiz</a></li>
-                    <li><a href="#game-section">Espaço Game</a></li>
-                </ul>
-            </nav>
-        </div>
+        <h1>Carbonização no Campo</h1>
+        <p>Entenda o impacto, a ciência e os desafios do carbono na agricultura.</p>
     </header>
 
-    <section class="hero">
-        <div class="hero-content container">
-            <h1>Carbonização do Campo</h1>
-            <p>Sequestro de carbono, sustentabilidade e inovação tecnológica no agronegócio paranaense.</p>
-        </div>
-    </section>
+    <main class="container">
+        <section id="info-section" class="card">
+            <h2>O que é a Carbonização no Campo?</h2>
+            <p>A carbonização no campo refere-se tanto ao processo de queima incompleta da biomassa vegetal para a produção de carvão vegetal quanto ao acúmulo e retenção de carbono no solo (sequestro de carbono). Enquanto a queima descontrolada pode liberar gases de efeito estufa, práticas agrícolas sustentáveis ajudam a fixar o carbono na terra, combatendo as mudanças climáticas.</p>
+        </section>
 
-    <section id="quiz-section" class="container section">
-        <div class="quiz-container">
-            <div id="quiz-fluxo">
-                <div class="progress-bar-container">
-                    <div id="barra-progresso" class="progress-bar"></div>
-                </div>
-                <h2 id="num-pergunta" style="text-align: left; font-size: 1.2rem; color: var(--primary); margin-bottom: 5px;">Pergunta 1 de 10</h2>
-                <h3 id="texto-pergunta" style="font-size: 1.4rem; margin-bottom: 20px; color: var(--dark);">Carregando questionário...</h3>
-                
-                <div id="caixa-alternativas" class="alternativas-grid"></div>
-                
-                <div id="dica-navegacao" class="teclado-info hidden">
-                    <span>Pressione a tecla</span> <span class="key-cap">D</span> <span>no teclado para passar para a próxima pergunta.</span>
-                </div>
+        <section id="quiz-section" class="card">
+            <h2>Quiz do Conhecimento</h2>
+            <div id="quiz-container">
+                <p id="question-number">Pergunta 1 de 10</p>
+                <p id="question-text">Carregando pergunta...</p>
+                <div id="options-container" class="options-grid">
+                    </div>
             </div>
+        </section>
 
-            <div id="quiz-resultado" class="hidden" style="text-align: center;">
-                <h2 style="color: var(--primary-dark); margin-bottom: 15px;">Quiz Concluído! 🏆</h2>
-                <p style="font-size: 1.25rem; margin-bottom: 20px;">Você acertou <strong id="pontos-finais">0</strong> de <strong>10</strong> questões.</p>
-                <div style="background-color: #e8f5e9; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
-                    <p style="font-weight: 600; color: var(--primary-dark);">Parabéns! Seu conhecimento ajuda a construir uma agricultura sustentável.</p>
-                    <p style="font-size: 0.95rem; margin-top: 5px; color: #555;">Agora, prepare-se para o desafio prático no campo de testes!</p>
-                </div>
-                <button class="btn-acao" onclick="liberarJogo()">Ir para o Jogo do Trator 🚜</button>
+        <section id="game-section" class="card hidden">
+            <h2>Jogo da Fazenda: Desafio do Trator</h2>
+            <p>Use as teclas do teclado para mover o trator e desviar dos obstáculos de fumaça e troncos!</p>
+            <p><strong>Controles:</strong> D = Frente | W = Direita | A = Esquerda</p>
+            <div id="canvas-container">
+                <canvas id="gameCanvas" width="600" height="400"></canvas>
             </div>
-        </div>
-    </section>
-
-    <section id="game-section" class="container section">
-        <div id="trator-game" class="game-wrapper">
-            <h2 style="color: var(--primary-dark); margin-bottom: 10px;">🚜 Simulador de Campo: Operação Trator</h2>
-            <p style="color: #6c757d; margin-bottom: 25px;">Desvie dos resíduos e madeiras na pista para manter o solo protegido!</p>
-            
-            <div class="game-instructions">
-                <strong>Como Jogar:</strong> Use as setas do teclado <span class="key-cap">←</span> e <span class="key-cap">→</span> (ou as teclas <span class="key-cap">A</span> e <span class="key-cap">D</span>) para mover o trator para a esquerda ou direita e evitar colisões com as madeiras.
+            <div id="game-controls">
+                <p>Pontuação: <span id="score">0</span></p>
+                <button id="restart-btn" class="hidden">Jogar Novamente</button>
             </div>
-
-            <div style="font-size: 1.2rem; font-weight: bold; margin-bottom: 10px;">
-                Pontuação: <span id="game-score" style="color: var(--primary);">0</span>
-            </div>
-
-            <canvas id="gameCanvas" width="400" height="500"></canvas>
-            
-            <div style="margin-top: 15px;">
-                <button id="btn-reset-game" class="btn-acao hidden" onclick="reiniciarJogo()">Jogar Novamente</button>
-            </div>
-        </div>
-    </section>
+        </section>
+    </main>
 
     <footer>
-        <div class="container">
-            <p>&copy; 2026 Agrinho Paraná - Carbonização do Campo. Material estritamente pedagógico e interativo.</p>
-        </div>
+        <p>© 2026 - Educacional: Sustentabilidade e Carbonização</p>
     </footer>
 
-    <script>
-        // BANCO DE DADOS: 10 Perguntas sobre Carbonização e Práticas Sustentáveis no Campo
-        const perguntasQuiz = [
-            {
-                pergunta: "O que é o sequestro de carbono no solo?",
-                alternativas: [
-                    "A queima de resíduos vegetais para limpar os ecossistemas.",
-                    "A remoção de CO₂ atmosférico pelas plantas e fixação estável na matéria orgânica.",
-                    "A extração mineral de carvão para produção de combustível fóssil.",
-                    "A aplicação de compostos sintéticos gaseificados na plantação."
-                ],
-                correta: 1
-            },
-            {
-                pergunta: "Qual dessas práticas agrícolas evita a oxidação e perda de carbono do solo?",
-                alternativas: [
-                    "Aração profunda do solo frequente.",
-                    "Queimada controlada pós-colheita.",
-                    "Plantio Direto sobre a palhada anterior.",
-                    "Monocultura contínua sem rotação."
-                ],
-                correta: 2
-            },
-            {
-                pergunta: "O que significa a sigla ILPF na agricultura sustentável?",
-                alternativas: [
-                    "Integração Lavoura-Pecuária-Floresta.",
-                    "Indústria de Lavoura com Produtos Fosfatados.",
-                    "Instituto Livre de Plantações de Flores.",
-                    "Inovação de Longo Prazo em Fertilizantes."
-                ],
-                correta: 0
-            },
-            {
-                pergunta: "Como as árvores plantadas nos sistemas integrados atuam no balanço de carbono?",
-                alternativas: [
-                    "Elas competem por nutrientes diminuindo a produtividade geral.",
-                    "Focalizam a retenção de nitrogênio mas eliminam o carbono estável.",
-                    "Servem como drenos de longo prazo, absorvendo e estocando carbono no tronco e raízes.",
-                    "Aceleram a decomposição hídrica sem reter gases."
-                ],
-                correta: 2
-            },
-            {
-                pergunta: "Qual o benefício secundário de um solo com alto índice de carbono orgânico?",
-                alternativas: [
-                    "Aumento da erosão laminar.",
-                    "Maior retenção de água e resiliência a secas (estiagem).",
-                    "Redução da necessidade de luz solar pelas folhas.",
-                    "Compactação do terreno facilitando o maquinário."
-                ],
-                correta: 1
-            },
-            {
-                pergunta: "Qual elemento químico é a base estrutural da matéria orgânica do solo?",
-                alternativas: [
-                    "Oxigênio Líquido.",
-                    "Cloro.",
-                    "Carbono.",
-                    "Enxofre."
-                ],
-                correta: 2
-            },
-            {
-                pergunta: "Por que a aração convencional reduz os estoques de carbono da terra?",
-                alternativas: [
-                    "Porque expõe a matéria orgânica aos microrganismos e oxigênio, acelerando a decomposição em CO₂.",
-                    "Porque destrói os minerais de ferro do subsolo diretamente.",
-                    "Porque impede que a água da chuva entre em contato com as plantas.",
-                    "Porque adiciona excesso de nitrogênio gasoso nas camadas internas."
-                ],
-                correta: 0
-            },
-            {
-                pergunta: "A rotação de culturas com plantas de cobertura é eficaz porque:",
-                alternativas: [
-                    "Elimina a necessidade de qualquer maquinário na propriedade.",
-                    "Garante que o solo fique limpo e descoberto no inverno.",
-                    "Aumenta o aporte contínuo de biomassa vegetal e diferentes resíduos ricos em carbono.",
-                    "Reduz drasticamente a quantidade de oxigênio disponível na atmosfera."
-                ],
-                correta: 2
-            },
-            {
-                pergunta: "Como o programa Agrinho 2026 enxerga a descarbonização no campo?",
-                alternativas: [
-                    "Como um obstáculo econômico para as pequenas propriedades rurais.",
-                    "Como uma oportunidade de aliar inovação tecnológica, conservação ambiental e educação.",
-                    "Como uma técnica teórica sem aplicação prática no estado do Paraná.",
-                    "Como um método voltado exclusivamente à produção industrial florestal."
-                ],
-                correta: 1
-            },
-            {
-                pergunta: "A decomposição de resíduos estabilizados no solo gera uma substância escura e rica em carbono chamada:",
-                alternativas: [
-                    "Húmus.",
-                    "Calcário calcítico.",
-                    "Silicato de alumínio.",
-                    "Salitre do Chile."
-                ],
-                correta: 0
-            }
-        ];
-
-        let perguntaAtual = 0;
-        let pontuacaoQuiz = 0;
-        let respostaSelecionadaNestaRodada = false;
-
-        // Elementos de tela - Quiz
-        const textoPergunta = document.getElementById("texto
+    <script src="script.js"></script>
+</body>
+</html>
