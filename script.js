@@ -1,183 +1,140 @@
-/* ==========================================================================
-   1. GERENCIAMENTO E LOGICA DO QUIZ INTERATIVO
-   ========================================================================== */
-
-let perguntaAtual = 0;
-let pontuacaoQuiz = 0;
-let respostaSelecionadaNestaRodada = false;
-
-// Elementos da Interface (DOM)
-const textoPergunta = document.getElementById("texto-pergunta");
-const numPergunta = document.getElementById("num-pergunta");
-const caixaAlternativas = document.getElementById("caixa-alternativas");
-const barraProgresso = document.getElementById("barra-progresso");
-const dicaNavegacao = document.getElementById("dica-navegacao");
-const quizFluxo = document.getElementById("quiz-fluxo");
-const quizResultado = document.getElementById("quiz-resultado");
-const pontosFinais = document.getElementById("pontos-finais");
-
-// Inicializa o Quiz assim que a página carregar
-window.addEventListener("DOMContentLoaded", () => {
-    carregarPergunta();
-    
-    // Ouvinte de teclado para avançar a pergunta com a tecla 'D'
-    window.addEventListener("keydown", (e) => {
-        if (e.key.toLowerCase() === "d" && respostaSelecionadaNestaRodada) {
-            proximaPergunta();
-        }
-    });
-});
-
-// Carrega a pergunta atual na tela
-function carregarPergunta() {
-    respostaSelecionadaNestaRodada = false;
-    dicaNavegacao.classList.add("hidden");
-    caixaAlternativas.innerHTML = "";
-
-    const dadosPergunta = perguntasQuiz[perguntaAtual];
-    
-    // Atualiza textos e barra de progresso
-    numPergunta.textContent = `Pergunta ${perguntaAtual + 1} de ${perguntasQuiz.length}`;
-    textoPergunta.textContent = dadosPergunta.pergunta;
-    
-    const porcentagemProgresso = ((perguntaAtual + 1) / perguntasQuiz.length) * 100;
-    barraProgresso.style.width = `${porcentagemProgresso}%`;
-
-    // Renderiza os botões das alternativas
-    dadosPergunta.alternativas.forEach((alternativa, index) => {
-        const botao = document.createElement("button");
-        botao.className = "btn-alternativa";
-        botao.textContent = alternativa;
-        botao.onclick = () => verificarResposta(index, botao);
-        caixaAlternativas.appendChild(botao);
-    });
+/* Configurações Gerais */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-// Valida a resposta do usuário
-function verificarResposta(indexSelecionado, botaoClicado) {
-    if (respostaSelecionadaNestaRodada) return; // Evita cliques múltiplos
-    respostaSelecionadaNestaRodada = true;
-
-    const correta = perguntasQuiz[perguntaAtual].correta;
-    const todosBotoes = caixaAlternativas.querySelectorAll(".btn-alternativa");
-
-    if (indexSelecionado === correta) {
-        botaoClicado.style.backgroundColor = "var(--success-light)";
-        botaoClicado.style.borderColor = "var(--success)";
-        pontuacaoQuiz++;
-    } else {
-        botaoClicado.style.backgroundColor = "var(--error-light)";
-        botaoClicado.style.borderColor = "var(--error)";
-        // Destaca a correta para o aluno aprender
-        todosBotoes[correta].style.backgroundColor = "var(--success-light)";
-        todosBotoes[correta].style.borderColor = "var(--success)";
-    }
-
-    // Desabilita os outros botões
-    todosBotoes.forEach(btn => btn.disabled = true);
-
-    // Mostra feedback de navegação
-    dicaNavegacao.classList.remove("hidden");
+body {
+    background-color: #f4f7f4;
+    color: #333;
+    line-height: 1.6;
 }
 
-// Avança para a próxima pergunta ou encerra o quiz
-function proximaPergunta() {
-    perguntaAtual++;
-    if (perguntaAtual < perguntasQuiz.length) {
-        carregarPergunta();
-    } else {
-        // Mostra tela de resultados
-        quizFluxo.classList.add("hidden");
-        quizResultado.classList.remove("hidden");
-        pontosFinais.textContent = pontuacaoQuiz;
-    }
+header {
+    background-color: #2e5a27;
+    color: white;
+    text-align: center;
+    padding: 2rem 1rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-// Libera a seção do jogo do trator
-function liberarJogo() {
-    const sectionJogo = document.getElementById("trator-game");
-    sectionJogo.style.display = "block";
-    sectionJogo.scrollIntoView({ behavior: 'smooth' });
-    inicializarJogo();
+header h1 {
+    margin-bottom: 0.5rem;
 }
 
-
-/* ==========================================================================
-   2. MOTOR DO MINI GAME DO TRATOR (CANVAS)
-   ========================================================================== */
-
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
-const scoreDisplay = document.getElementById("game-score");
-const btnReset = document.getElementById("btn-reset-game");
-
-let gameInterval;
-let gameActive = false;
-let score = 0;
-
-// Configurações do Jogador (Trator)
-const trator = {
-    x: 175,
-    y: 420,
-    width: 50,
-    height: 60,
-    speed: 8
-};
-
-// Controles por teclado
-const teclas = {
-    ArrowLeft: false,
-    ArrowRight: false,
-    a: false,
-    d: false
-};
-
-// Configurações dos Obstáculos (Madeiras/Resíduos)
-let obstaculos = [];
-let spawnTimer = 0;
-let spawnRate = 60; // Frequência com que surgem novos obstáculos
-let gameSpeed = 4;   // Velocidade de descida
-
-// Escutadores do Teclado para Movimentação
-window.addEventListener("keydown", (e) => {
-    if (e.key in teclas) teclas[e.key] = true;
-});
-
-window.addEventListener("keyup", (e) => {
-    if (e.key in teclas) teclas[e.key] = false;
-});
-
-// Inicializa as variáveis do jogo
-function inicializarJogo() {
-    if (gameActive) return;
-    gameActive = true;
-    score = 0;
-    gameSpeed = 4;
-    spawnRate = 60;
-    obstaculos = [];
-    trator.x = (canvas.width / 2) - (trator.width / 2);
-    scoreDisplay.textContent = score;
-    btnReset.classList.add("hidden");
-    
-    // Roda o loop do jogo a 60 frames por segundo
-    gameInterval = setInterval(updateGame, 1000 / 60);
+.container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 0 1rem;
 }
 
-// Desenha o Trator (Estilizado geometricamente em formato de Trator de fazenda)
-function desenharTrator() {
-    // Corpo Principal (Verde Agrinho)
-    ctx.fillStyle = "#1b5e20";
-    ctx.fillRect(trator.x + 5, trator.y + 15, 40, 35);
-    
-    // Cabine do Motorista
-    ctx.fillStyle = "#a5d6a7";
-    ctx.fillRect(trator.x + 10, trator.y, 30, 20);
-    
-    // Rodas Grandes Traseiras (Pretas)
-    ctx.fillStyle = "#212529";
-    ctx.fillRect(trator.x, trator.y + 30, 8, 25);
-    ctx.fillRect(trator.x + 42, trator.y + 30, 8, 25);
+.card {
+    background: white;
+    border-radius: 8px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
 
-    // Rodas Dianteiras Pequenas
-    ctx.fillRect(trator.x + 3, trator.y + 5, 6, 12);
-    ctx.fillRect(trator.x + 41, trator.y + 5, 6, 12);
+h2 {
+    color: #2e5a27;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 0.5rem;
+}
+
+/* Estilos do Quiz */
+#question-number {
+    font-weight: bold;
+    color: #718096;
+    margin-bottom: 0.5rem;
+}
+
+#question-text {
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+.options-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.option-btn {
+    background-color: #edf2f7;
+    border: 2px solid #cbd5e0;
+    border-radius: 6px;
+    padding: 1rem;
+    text-align: left;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.option-btn:hover {
+    background-color: #e2e8f0;
+    border-color: #a0aec0;
+}
+
+.option-btn.correct {
+    background-color: #c6f6d5;
+    border-color: #38a169;
+    color: #22543d;
+}
+
+.option-btn.wrong {
+    background-color: #fed7d7;
+    border-color: #e53e3e;
+    color: #742a2a;
+}
+
+/* Estilos do Jogo */
+.hidden {
+    display: none !important;
+}
+
+#canvas-container {
+    display: flex;
+    justify-content: center;
+    margin: 1.5rem 0;
+}
+
+canvas {
+    background-color: #8bc34a; /* Cor de grama */
+    border: 4px solid #558b2f;
+    border-radius: 4px;
+    display: block;
+}
+
+#game-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+button#restart-btn {
+    background-color: #2e5a27;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button#restart-btn:hover {
+    background-color: #1e3d19;
+}
+
+footer {
+    text-align: center;
+    padding: 1.5rem;
+    background-color: #2d3748;
+    color: #a0aec0;
+    margin-top: 4rem;
+}
