@@ -3,117 +3,741 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carbonização no Campo</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Carbonização no Campo - Simulador Sustentável</title>
+    <style>
+        /* --- ESTILOS GERAIS --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f0f4f1;
+            color: #2c3e50;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e3d19, #2e5a27);
+            color: white;
+            text-align: center;
+            padding: 2rem 1rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            flex: 1;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* --- INTERFACE DO JOGO --- */
+        .game-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .indicators-group {
+            display: flex;
+            gap: 15px;
+        }
+
+        .badge-ui {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .bg-money { background-color: #15803d; }
+        .bg-carbon-good { background-color: #0284c7; }
+        .bg-carbon-bad { background-color: #b91c1c; }
+
+        #canvas-container {
+            position: relative;
+            background: #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 3px solid #cbd5e1;
+            display: flex;
+            justify-content: center;
+        }
+
+        canvas {
+            display: block;
+            background-color: #22c55e;
+        }
+
+        /* --- MENU HAMBÚRGUER E SIDEBAR --- */
+        .hamburger-icon {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background-color: #1e3d19;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            font-size: 0.9rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            transition: background 0.2s;
+        }
+
+        .hamburger-icon:hover { background-color: #2e5a27; }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 320px;
+            height: 100%;
+            background-color: #ffffff;
+            box-shadow: 5px 0 20px rgba(0,0,0,0.2);
+            z-index: 1001;
+            padding: 25px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .sidebar-header h3 { color: #1e3d19; }
+        .close-btn { font-size: 2rem; font-weight: bold; cursor: pointer; color: #94a3b8; }
+        .close-btn:hover { color: #ef4444; }
+
+        .wallet-box {
+            background: #f0fdf4;
+            border: 1px dashed #22c55e;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .wallet-box .money-txt { font-size: 1.5rem; font-weight: bold; color: #15803d; }
+
+        .manual-box {
+            background-color: #f8fafc;
+            border-left: 4px solid #3b82f6;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            color: #334155;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+
+        .manual-box ul { list-style: none; margin-top: 5px; }
+        .manual-box li { margin-bottom: 6px; }
+        .badge { background: #cbd5e1; padding: 1px 5px; border-radius: 4px; font-family: monospace; font-weight: bold; }
+
+        .land-btn {
+            background-color: #f59e0b;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            margin-bottom: 8px;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        .land-btn:hover { background-color: #d97706; }
+
+        .sidebar-main-action-btn {
+            background-color: #dc2626;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: auto;
+        }
+
+        /* Painel inferior do jogo */
+        .control-panel-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .vehicle-status-card .label { font-size: 0.8rem; color: #64748b; text-transform: uppercase; }
+        .vehicle-status-card .value { font-size: 1.2rem; font-weight: bold; color: #1e293b; }
+        .vehicle-status-card .sub-value { font-size: 0.9rem; color: #475569; font-weight: 500; }
+
+        .control-action-btn {
+            background-color: #2e5a27;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .control-action-btn:hover { background-color: #1e3d19; }
+
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            background: #1e293b;
+            color: #cbd5e1;
+            font-size: 0.9rem;
+            margin-top: auto;
+        }
+
+        hr { border: 0; height: 1px; background: #e2e8f0; margin: 15px 0; }
+    </style>
 </head>
 <body>
 
-    <div id="hamburger-menu" class="hamburger-icon hidden">☰ Menu Fazenda</div>
+    <div id="hamburger-menu" class="hamburger-icon">☰ Menu Fazenda</div>
+    
     <div id="sidebar" class="sidebar hidden">
         <div class="sidebar-header">
-            <h3>Painel do Fazendeiro</h3>
+            <h3>Painel Econômico</h3>
             <span id="close-sidebar" class="close-btn">&times;</span>
         </div>
-        <div class="sidebar-content">
-            <div class="farm-logo-area">🌾🚜🌽</div>
+        <div class="sidebar-content" style="display: flex; flex-direction: column; flex: 1;">
             
             <div class="wallet-box">
-                <p>Seu Saldo Atual:</p>
+                <p>Saldo Bancário:</p>
                 <span class="money-txt">R$ <span id="sidebar-money">0</span></span>
             </div>
 
             <hr>
 
-            <h4>Manual de Instruções</h4>
+            <h4>Manual de Operações</h4>
             <div class="manual-box">
-                <p><strong>Controles Globais:</strong></p>
+                <p><strong>Movimentação:</strong> <span class="badge">W</span> <span class="badge">A</span> <span class="badge">S</span> <span class="badge">D</span></p>
+                <br>
+                <p><strong>Fluxo Sustentável:</strong></p>
                 <ul>
-                    <li><span class="badge">W</span> Mover para Cima</li>
-                    <li><span class="badge">S</span> Mover para Trás</li>
-                    <li><span class="badge">A</span> Mover para Esquerda</li>
-                    <li><span class="badge">D</span> Mover para Direita</li>
-                </ul>
-                <p class="margin-top"><strong>Mecânica de Colheita:</strong></p>
-                <ul>
-                    <li>🚜 <span style="color:#e53e3e; font-weight:bold;">Vermelha</span> colhe <strong>Soja</strong>.</li>
-                    <li>🚜 <span style="color:#d97706; font-weight:bold;">Amarela</span> colhe <strong>Milho</strong>.</li>
-                    <li>Passe por cima da planta madura para colher. Ela demora <strong>2 minutos</strong> para crescer novamente.</li>
-                </ul>
-                <p class="margin-top"><strong>Descarga e Venda:</strong></p>
-                <ul>
-                    <li>Aproxime a colheitadeira do caminhão e aperte <span class="badge">G</span> para transbordar a carga.</li>
-                    <li>Leve o 🚚 <strong>Caminhão Azul</strong> até o galpão cinza e aperte <span class="badge">F</span> para vender (Ganha <strong>R$ 10</strong> por ciclo).</li>
+                    <li>1. Passe com as colheitadeiras nos talhões maduros. Ela armazena biomassa crua.</li>
+                    <li>2. Encoste no 🚚 <strong>Caminhão Azul</strong> e aperte <span class="badge">G</span> para transferir a carga.</li>
+                    <li>3. Leve o caminhão até a 🏭 <strong>Fábrica de Biochar</strong> (Preta) e aperte <span class="badge">F</span> para processar.</li>
+                    <li>4. Com o caminhão carregado de Biochar, vá até a 🏦 <strong>Agência de Crédito</strong> (Cinza) e aperte <span class="badge">F</span> para vender e faturar lucro.</li>
+                    <li>5. <strong>BÔNUS ECO:</strong> Leve o Biochar até um lote de terra vazia e aperte <span class="badge">E</span> para adubar! Isso acelera o crescimento em 2x e gera créditos financeiros imediatos.</li>
                 </ul>
             </div>
 
             <hr>
 
-            <h4>Expandir Propriedade</h4>
+            <h4>Expandir Território</h4>
             <div class="upgrades-list">
-                <button id="buy-land-3" class="land-btn">Desbloquear Área Norte (Milho) <br><strong>Custo: R$ 30</strong></button>
-                <button id="buy-land-4" class="land-btn">Desbloquear Área Sul (Soja) <br><strong>Custo: R$ 50</strong></button>
+                <button id="buy-land-3" class="land-btn">Desbloquear Expansão Norte (Milho) <br><strong>Custo: R$ 30</strong></button>
+                <button id="buy-land-4" class="land-btn">Desbloquear Expansão Sul (Soja) <br><strong>Custo: R$ 50</strong></button>
             </div>
             
-            <hr>
             <button id="sidebar-start-btn" class="sidebar-main-action-btn">Reiniciar Simulação</button>
         </div>
     </div>
 
     <header>
-        <h1>Carbonização no Campo</h1>
-        <p>Entenda o impacto, a ciência e os desafios do carbono na agricultura.</p>
+        <h1>Carbonização e Sustentabilidade no Campo</h1>
+        <p>Gerencie as emissões de maquinário, produza biocarvão (Biochar) e monetize créditos de carbono!</p>
     </header>
 
     <main class="container">
-        <section id="menu-section" class="card menu-card">
-            <div class="menu-icon">🌱🚜</div>
-            <h2>Carbonização no Campo</h2>
-            <p class="menu-subtitle">Prepare-se para testar seus conhecimentos sobre sustentabilidade agrícola e enfrentar o Desafio do Trator!</p>
-            <button id="start-quiz-btn" class="main-btn">Iniciar Jornada</button>
-        </section>
-
-        <section id="info-section" class="card hidden">
-            <h2>O que é a Carbonização no Campo?</h2>
-            <p>A carbonização no campo refere-se tanto ao processo de queima incompleta da biomassa vegetal para a produção de carvão vegetal quanto ao acúmulo e retenção de carbono no solo (sequestro de carbono). Enquanto a queima descontrolada pode liberar gases de efeito estufa, práticas agrícolas sustentáveis ajudam a fixar o carbono na terra, combatendo as mudanças climáticas.</p>
-        </section>
-
-        <section id="quiz-section" class="card hidden">
-            <h2>Quiz do Conhecimento</h2>
-            <div id="quiz-container">
-                <p id="question-number">Pergunta 1 de 10</p>
-                <p id="question-text">Carregando pergunta...</p>
-                <div id="options-container" class="options-grid"></div>
-            </div>
-        </section>
-
-        <section id="game-section" class="card hidden">
+        <section id="game-section" class="card">
             <div class="game-header-flex">
-                <h2>Grande Fazenda Sustentável</h2>
-                <div class="live-money-badge">R$ <span id="game-money">0</span></div>
+                <h2>Simulador de Impacto Ecológico</h2>
+                <div class="indicators-group">
+                    <div id="carbon-badge" class="badge-ui bg-carbon-good">Balanço CO₂: <span id="game-carbon">0</span> kg</div>
+                    <div class="badge-ui bg-money">R$ <span id="game-money">0</span></div>
+                </div>
             </div>
             
             <div id="canvas-container">
-                <canvas id="gameCanvas" width="750" height="480"></canvas>
+                <canvas id="gameCanvas" width="780" height="480"></canvas>
             </div>
 
             <div class="control-panel-footer">
                 <div class="vehicle-status-card">
-                    <p class="label">Veículo Ativo:</p>
+                    <p class="label">Operando Maquinário:</p>
                     <p id="current-vehicle-txt" class="value">Carregando...</p>
-                    <p id="cargo-stats-txt" class="sub-value">Carga: Vazio (0/100)</p>
+                    <p id="cargo-stats-txt" class="sub-value">Carga: Vazia</p>
                 </div>
                 
                 <div class="action-buttons-group">
-                    <button id="switch-veh-btn" class="control-action-btn">🔄 Trocar Veículo</button>
+                    <button id="switch-veh-btn" class="control-action-btn">🔄 Alternar Veículo</button>
                 </div>
             </div>
         </section>
     </main>
 
     <footer>
-        <p>© 2026 - Educacional: Sustentabilidade e Carbonização</p>
+        <p>© 2026 - Tecnologia e Práticas Agrícolas Sustentáveis</p>
     </footer>
 
-    <script src="script.js"></script>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Estado Econômico e Ambiental da Fazenda
+        let farmWallet = 10; 
+        let carbonBalance = 0; // Balanço acumulado de carbono em kg
+        let activeVehicleIndex = 0; 
+        let farmLoopInterval = null;
+        let activeKeys = {};
+
+        // Entidades do Universo
+        let vehiclesList = [];
+        let landSectors = [];
+        
+        // Estruturas de Processamento Integradas
+        let biocharFactory = { x: 620, y: 20, w: 130, h: 120, storedBiomass: 0, readyBiochar: 0 };
+        let creditAgency = { x: 620, y: 300, w: 130, h: 120 };
+
+        const hamburgerMenu = document.getElementById('hamburger-menu');
+        const sidebar = document.getElementById('sidebar');
+        const closeSidebar = document.getElementById('close-sidebar');
+        const sidebarMoneyEl = document.getElementById('sidebar-money');
+        const gameMoneyEl = document.getElementById('game-money');
+        const gameCarbonEl = document.getElementById('game-carbon');
+        const carbonBadge = document.getElementById('carbon-badge');
+        const currentVehicleTxt = document.getElementById('current-vehicle-txt');
+        const cargoStatsTxt = document.getElementById('cargo-stats-txt');
+        const switchVehBtn = document.getElementById('switch-veh-btn');
+        const sidebarStartBtn = document.getElementById('sidebar-start-btn');
+        const buyLand3Btn = document.getElementById('buy-land-3');
+        const buyLand4Btn = document.getElementById('buy-land-4');
+
+        // Escutadores de Menus
+        hamburgerMenu.addEventListener('click', () => sidebar.classList.remove('hidden'));
+        closeSidebar.addEventListener('click', () => sidebar.classList.add('hidden'));
+        sidebarStartBtn.addEventListener('click', () => { sidebar.classList.add('hidden'); initFarmSimulator(); });
+        switchVehBtn.addEventListener('click', () => {
+            activeVehicleIndex = (activeVehicleIndex + 1) % vehiclesList.length;
+            updateUserInterface();
+        });
+
+        buyLand3Btn.addEventListener('click', () => purchaseSector(3, buyLand3Btn));
+        buyLand4Btn.addEventListener('click', () => purchaseSector(4, buyLand4Btn));
+
+        function initFarmSimulator() {
+            farmWallet = 20;
+            carbonBalance = 0;
+            activeVehicleIndex = 0;
+            activeKeys = {};
+            
+            biocharFactory.storedBiomass = 0;
+            biocharFactory.readyBiochar = 0;
+
+            // Frotas com consumo, pegada de carbono ativa e capacidade de transporte
+            vehiclesList = [
+                { id: 0, nome: "Colheitadeira Vermelha (Soja)", tipo: "harvester_soja", x: 420, y: 180, w: 42, h: 48, speed: 2.5, color: "#ef4444", cargoType: null, cargoAmount: 0, cargoMax: 100, emissionRate: 0.15 },
+                { id: 1, nome: "Colheitadeira Amarela (Milho)", tipo: "harvester_milho", x: 480, y: 180, w: 42, h: 48, speed: 2.5, color: "#fbbf24", cargoType: null, cargoAmount: 0, cargoMax: 100, emissionRate: 0.15 },
+                { id: 2, nome: "Caminhão de Logística Azul", tipo: "truck", x: 540, y: 180, w: 38, h: 55, speed: 3.5, color: "#3b82f6", cargoType: null, cargoAmount: 0, cargoMax: 250, emissionRate: 0.08 }
+            ];
+
+            // Setores com status de enriquecimento orgânico (Biochar)
+            landSectors = [
+                { id: 1, x: 30, y: 30, w: 160, h: 180, cropType: "milho", label: "Gleba Milho Alfa", harvested: false, regrowthTime: 0, locked: false, hasBiochar: false },
+                { id: 2, x: 220, y: 30, w: 160, h: 180, cropType: "soja", label: "Gleba Soja Alfa", harvested: false, regrowthTime: 0, locked: false, hasBiochar: false },
+                { id: 3, x: 30, y: 250, w: 160, h: 180, cropType: "milho", label: "Expansão Norte", harvested: false, regrowthTime: 0, locked: true, cost: 30, hasBiochar: false },
+                { id: 4, x: 220, y: 250, w: 160, h: 180, cropType: "soja", label: "Expansão Sul", harvested: false, regrowthTime: 0, locked: true, cost: 50, hasBiochar: false }
+            ];
+
+            // Resetar botões de compra visualmente
+            buyLand3Btn.innerHTML = `Desbloquear Expansão Norte (Milho) <br><strong>Custo: R$ 30</strong>`;
+            buyLand3Btn.style.background = "#f59e0b";
+            buyLand4Btn.innerHTML = `Desbloquear Expansão Sul (Soja) <br><strong>Custo: R$ 50</strong>`;
+            buyLand4Btn.style.background = "#f59e0b";
+
+            window.removeEventListener('keydown', registerKeyDown);
+            window.removeEventListener('keyup', registerKeyUp);
+            window.addEventListener('keydown', registerKeyDown);
+            window.addEventListener('keyup', registerKeyUp);
+
+            if (farmLoopInterval) clearInterval(farmLoopInterval);
+            farmLoopInterval = setInterval(renderFarmStep, 1000 / 60);
+            updateUserInterface();
+        }
+
+        function registerKeyDown(e) {
+            activeKeys[e.key.toLowerCase()] = true;
+            if (e.key.toLowerCase() === 'g') transboardCargo();
+            if (e.key.toLowerCase() === 'f') interactWithStructures();
+            if (e.key.toLowerCase() === 'e') applyBiocharToField();
+        }
+
+        function registerKeyUp(e) { activeKeys[e.key.toLowerCase()] = false; }
+
+        function purchaseSector(id, buttonEl) {
+            let sector = landSectors.find(s => s.id === id);
+            if (!sector || !sector.locked) return;
+
+            if (farmWallet >= sector.cost) {
+                farmWallet -= sector.cost;
+                sector.locked = false;
+                buttonEl.innerHTML = `${sector.label} <br><strong>[LIBERADO]</strong>`;
+                buttonEl.style.background = "#10b981";
+                updateUserInterface();
+            } else {
+                alert(`Saldo insuficiente! São necessários R$ ${sector.cost}.`);
+            }
+        }
+
+        function updateUserInterface() {
+            gameMoneyEl.innerText = farmWallet;
+            sidebarMoneyEl.innerText = farmWallet;
+            
+            // Formatando exibição do balanço ambiental
+            gameCarbonEl.innerText = carbonBalance.toFixed(1);
+            if (carbonBalance <= 0) {
+                carbonBadge.className = "badge-ui bg-carbon-good";
+            } else {
+                carbonBadge.className = "badge-ui bg-carbon-bad";
+            }
+
+            let activeVeh = vehiclesList[activeVehicleIndex];
+            currentVehicleTxt.innerText = activeVeh.nome;
+            let currentCargo = activeVeh.cargoType ? activeVeh.cargoType.toUpperCase() : "VAZIO";
+            cargoStatsTxt.innerText = `Armazenamento: ${currentCargo} (${activeVeh.cargoAmount}/${activeVeh.cargoMax} unidades)`;
+        }
+
+        // Transferência de grãos da colheitadeira para o caminhão
+        function transboardCargo() {
+            let current = vehiclesList[activeVehicleIndex];
+            if (!current.tipo.startsWith("harvester")) return;
+
+            let truck = vehiclesList.find(v => v.tipo === "truck");
+            let dist = Math.hypot((current.x + current.w/2) - (truck.x + truck.w/2), (current.y + current.h/2) - (truck.y + truck.h/2));
+
+            if (dist <= 80) {
+                if (current.cargoAmount === 0) return;
+                if (truck.cargoType === "biochar") {
+                    alert("O caminhão está carregado de Biochar processado! Descarregue antes.");
+                    return;
+                }
+                if (truck.cargoType === null || truck.cargoType === current.cargoType) {
+                    let space = truck.cargoMax - truck.cargoAmount;
+                    let moveAmount = Math.min(current.cargoAmount, space);
+
+                    if (moveAmount > 0) {
+                        truck.cargoType = current.cropType || current.cargoType;
+                        truck.cargoAmount += moveAmount;
+                        current.cargoAmount -= moveAmount;
+                        if (current.cargoAmount === 0) current.cargoType = null;
+                        updateUserInterface();
+                    }
+                } else {
+                    alert("Mistura inválida! O caminhão já possui outra cultura na caçamba.");
+                }
+            }
+        }
+
+        // Interações contextuais com Fábricas e Agências
+        function interactWithStructures() {
+            let current = vehiclesList[activeVehicleIndex];
+            if (current.tipo !== "truck") return;
+
+            // Checar Fábrica de Biochar
+            if (current.x + current.w > biocharFactory.x && current.y < biocharFactory.y + biocharFactory.h) {
+                if (current.cargoType === "milho" || current.cargoType === "soja") {
+                    biocharFactory.storedBiomass += current.cargoAmount;
+                    // Conversão térmica: Biomassa vira biochar, retendo o carbono de forma estável
+                    let converted = Math.floor(current.cargoAmount * 0.8);
+                    biocharFactory.readyBiochar += converted;
+                    
+                    // Sequestro ativo de CO2 ao converter biomassa em carvão estável
+                    carbonBalance -= (converted * 0.5); 
+
+                    current.cargoAmount = 0;
+                    current.cargoType = null;
+                    updateUserInterface();
+                } else if (current.cargoAmount === 0 && biocharFactory.readyBiochar > 0) {
+                    // Coleta o Biochar pronto para aplicar no campo ou vender
+                    current.cargoType = "biochar";
+                    current.cargoAmount = Math.min(current.cargoMax, biocharFactory.readyBiochar);
+                    biocharFactory.readyBiochar -= current.cargoAmount;
+                    updateUserInterface();
+                }
+            }
+
+            // Checar Agência de Crédito de Carbono (Silo Comercial)
+            if (current.x + current.w > creditAgency.x && current.y + current.h > creditAgency.y) {
+                if (current.cargoType === "biochar" && current.cargoAmount > 0) {
+                    let creditValue = Math.ceil(current.cargoAmount * 0.4);
+                    farmWallet += creditValue;
+                    
+                    // Bônus adicional se a fazenda estiver trabalhando com balanço ecológico limpo
+                    if (carbonBalance < 0) {
+                        farmWallet += 5;
+                    }
+
+                    current.cargoAmount = 0;
+                    current.cargoType = null;
+                    updateUserInterface();
+                }
+            }
+        }
+
+        // Aplicação de Biochar no solo para acelerar crescimento e gerar bônus
+        function applyBiocharToField() {
+            let current = vehiclesList[activeVehicleIndex];
+            if (current.tipo !== "truck" || current.cargoType !== "biochar" || current.cargoAmount <= 0) return;
+
+            landSectors.forEach(sector => {
+                if (!sector.locked && sector.harvested) {
+                    if (current.x < sector.x + sector.w && current.x + current.w > sector.x &&
+                        current.y < sector.y + sector.h && current.y + current.h > sector.y) {
+                        
+                        if (!sector.hasBiochar) {
+                            sector.hasBiochar = true;
+                            // Reduz o tempo restante de crescimento pela metade (Aceleração biológica)
+                            let now = Date.now();
+                            let remaining = sector.regrowthTime - now;
+                            if (remaining > 0) {
+                                sector.regrowthTime = now + (remaining / 2);
+                            }
+                            
+                            current.cargoAmount = Math.max(0, current.cargoAmount - 50);
+                            if (current.cargoAmount === 0) current.cargoType = null;
+                            
+                            // Ganho instantâneo ambiental por fixar carbono diretamente na terra
+                            carbonBalance -= 15;
+                            farmWallet += 5; // Subsídio governamental verde
+                            updateUserInterface();
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- LOOP DE RENDERIZAÇÃO E LÓGICA DO CANVAS ---
+        function renderFarmStep() {
+            let now = Date.now();
+
+            // 1. Renderização do Terreno Base
+            ctx.fillStyle = "#16a34a"; 
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Zonas de manobra e estradas internas
+            ctx.fillStyle = "#7c2d12"; 
+            ctx.fillRect(400, 0, 200, canvas.height);
+            ctx.fillRect(0, 430, canvas.width, 50);
+
+            // 2. Desenho das Infraestruturas Industriais
+            // Fábrica de Biochar
+            ctx.fillStyle = "#1e293b";
+            ctx.fillRect(biocharFactory.x, biocharFactory.y, biocharFactory.w, biocharFactory.h);
+            ctx.fillStyle = "#cfd8dc";
+            ctx.font = "bold 11px sans-serif";
+            ctx.fillText("🏭 FÁBRICA BIOCHAR", biocharFactory.x + 8, biocharFactory.y + 25);
+            ctx.font = "10px monospace";
+            ctx.fillText(`Biochar Disp: ${biocharFactory.readyBiochar}u`, biocharFactory.x + 10, biocharFactory.y + 60);
+            ctx.fillStyle = "#f59e0b";
+            ctx.fillRect(biocharFactory.x + 10, biocharFactory.y + 90, biocharFactory.w - 20, 15);
+            ctx.fillStyle = "#000";
+            ctx.fillText("PROCESSAR (F)", biocharFactory.x + 32, biocharFactory.y + 101);
+
+            // Agência Comercial de Créditos
+            ctx.fillStyle = "#475569";
+            ctx.fillRect(creditAgency.x, creditAgency.y, creditAgency.w, creditAgency.h);
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "bold 11px sans-serif";
+            ctx.fillText("🏦 BANCO VERDE", creditAgency.x + 18, creditAgency.y + 25);
+            ctx.font = "10px sans-serif";
+            ctx.fillText("Venda de Carbono", creditAgency.x + 20, creditAgency.y + 55);
+            ctx.fillStyle = "#10b981";
+            ctx.fillRect(creditAgency.x + 10, creditAgency.y + 90, creditAgency.w - 20, 15);
+            ctx.fillStyle = "#ffffff";
+            ctx.fillText("DESCARREGAR (F)", creditAgency.x + 22, creditAgency.y + 101);
+
+            // 3. Processamento e Atualização dos Lotes de Plantação
+            landSectors.forEach(sector => {
+                if (sector.locked) {
+                    ctx.fillStyle = "rgba(15, 23, 42, 0.9)";
+                    ctx.fillRect(sector.x, sector.y, sector.w, sector.h);
+                    ctx.strokeStyle = "#dc2626";
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(sector.x, sector.y, sector.w, sector.h);
+                    ctx.fillStyle = "#ffffff";
+                    ctx.font = "11px sans-serif";
+                    ctx.fillText("🔒 ÁREA TRANCADA", sector.x + 25, sector.y + sector.h / 2);
+                    return;
+                }
+
+                if (sector.harvested && now >= sector.regrowthTime) {
+                    sector.harvested = false;
+                    sector.hasBiochar = false; // Solo consome o adubo orgânico a cada ciclo
+                }
+
+                if (!sector.harvested) {
+                    // Pronto para colher
+                    ctx.fillStyle = (sector.cropType === "milho") ? "#eab308" : "#a16207";
+                    ctx.fillRect(sector.x, sector.y, sector.w, sector.h);
+                    
+                    // Detalhes visuais das plantações
+                    ctx.fillStyle = (sector.cropType === "milho") ? "#fef08a" : "#ca8a04";
+                    for (let i = 15; i < sector.w; i += 30) {
+                        ctx.fillRect(sector.x + i, sector.y + 10, 5, sector.h - 20);
+                    }
+                } else {
+                    // Terra Arada / Aguardando crescimento
+                    ctx.fillStyle = sector.hasBiochar ? "#1a0f00" : "#451a03"; // Fica mais escuro se tiver carvão (Biochar)
+                    ctx.fillRect(sector.x, sector.y, sector.w, sector.h);
+                    
+                    let timeLeft = Math.max(0, Math.round((sector.regrowthTime - now) / 1000));
+                    ctx.fillStyle = "#ffffff";
+                    ctx.font = "bold 11px monospace";
+                    ctx.fillText(`Crescendo: ${timeLeft}s`, sector.x + 25, sector.y + sector.h / 2);
+                    if (sector.hasBiochar) {
+                        ctx.fillStyle = "#38bdf8";
+                        ctx.fillText("⚡ [BIOCHAR ATIVO]", sector.x + 15, sector.y + sector.h / 2 + 20);
+                    }
+                }
+                
+                ctx.strokeStyle = "#ffffff";
+                ctx.lineWidth = 1;
+                ctx.strokeRect(sector.x, sector.y, sector.w, sector.h);
+            });
+
+            // 4. Mecânica de Movimentação Humana e Pegada Ecológica
+            let activeVeh = vehiclesList[activeVehicleIndex];
+            let isMoving = false;
+
+            if (activeKeys['w']) { activeVeh.y -= activeVeh.speed; isMoving = true; }
+            if (activeKeys['s']) { activeVeh.y += activeVeh.speed; isMoving = true; }
+            if (activeKeys['a']) { activeVeh.x -= activeVeh.speed; isMoving = true; }
+            if (activeKeys['d']) { activeVeh.x += activeVeh.speed; isMoving = true; }
+
+            // Restrições de borda do mapa
+            activeVeh.x = Math.max(0, Math.min(canvas.width - activeVeh.w, activeVeh.x));
+            activeVeh.y = Math.max(0, Math.min(canvas.height - activeVeh.h, activeVeh.y));
+
+            // Se o veículo estiver se movendo, ele emite carbono na atmosfera
+            if (isMoving) {
+                carbonBalance += activeVeh.emissionRate;
+                updateUserInterface();
+
+                // Efeito visual de fumaça de escape
+                ctx.fillStyle = "rgba(100, 116, 139, 0.5)";
+                ctx.beginPath();
+                ctx.arc(activeVeh.x + activeVeh.w / 2, activeVeh.y + activeVeh.h + 2, 6, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // 5. Verificação de Colisão para Colheita Automática
+            landSectors.forEach(sector => {
+                if (!sector.locked && !sector.harvested) {
+                    if (activeVeh.x < sector.x + sector.w && activeVeh.x + activeVeh.w > sector.x &&
+                        activeVeh.y < sector.y + sector.h && activeVeh.y + activeVeh.h > sector.y) {
+                        
+                        if (activeVeh.tipo === "harvester_milho" && sector.cropType === "milho" && activeVeh.cargoAmount < activeVeh.cargoMax) {
+                            sector.harvested = true;
+                            // Tempo padrão de regeneração: 45 segundos (Reduzido para dinamicidade do jogo)
+                            sector.regrowthTime = now + 45000; 
+                            activeVeh.cargoType = "milho";
+                            activeVeh.cargoAmount = Math.min(activeVeh.cargoMax, activeVeh.cargoAmount + 25);
+                            updateUserInterface();
+                        }
+                        else if (activeVeh.tipo === "harvester_soja" && sector.cropType === "soja" && activeVeh.cargoAmount < activeVeh.cargoMax) {
+                            sector.harvested = true;
+                            sector.regrowthTime = now + 45000;
+                            activeVeh.cargoType = "soja";
+                            activeVeh.cargoAmount = Math.min(activeVeh.cargoMax, activeVeh.cargoAmount + 25);
+                            updateUserInterface();
+                        }
+                    }
+                }
+            });
+
+            // 6. Desenho da Frota no Canvas
+            vehiclesList.forEach(v => {
+                ctx.fillStyle = v.color;
+                ctx.fillRect(v.x, v.y, v.w, v.h);
+
+                // Cabine de vidro do veículo
+                ctx.fillStyle = "#e2e8f0";
+                ctx.fillRect(v.x + 5, v.y + 6, v.w - 10, 12);
+
+                // Detalhe de esteiras/rodas pretas
+                ctx.fillStyle = "#1e293b";
+                ctx.fillRect(v.x - 2, v.y + 8, 3, 12);
+                ctx.fillRect(v.x + v.w, v.y + 8, 3, 12);
+                ctx.fillRect(v.x - 2, v.y + v.h - 18, 3, 12);
+                ctx.fillRect(v.x + v.w, v.y + v.h - 18, 3, 12);
+
+                // Barra indicadora de carga interna na caçamba
+                if (v.cargoAmount > 0) {
+                    let pct = v.cargoAmount / v.cargoMax;
+                    ctx.fillStyle = (v.cargoType === "milho") ? "#eab308" : (v.cargoType === "biochar" ? "#0f172a" : "#854d0e");
+                    ctx.fillRect(v.x + 5, v.y + v.h - 12, (v.w - 10) * pct, 6);
+                }
+
+                // Indicador luminoso de seleção de controle ativo
+                if (v.id === vehiclesList[activeVehicleIndex].id) {
+                    ctx.strokeStyle = "#ffffff";
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(v.x - 4, v.y - 4, v.w + 8, v.h + 8);
+                }
+            });
+        }
+
+        // Inicialização automática do ambiente do simulador na carga da página
+        window.onload = initFarmSimulator;
+    </script>
 </body>
 </html>
