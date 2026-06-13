@@ -1,196 +1,221 @@
-/* Configurações Gerais */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
+/* --- CONFIGURAÇÕES EXCLUSIVAS DO SIMULADOR DA FAZENDA --- */
 
-body {
-    background-color: #f4f7f4;
-    color: #333;
-    line-height: 1.6;
-}
-
-header {
-    background-color: #2e5a27;
-    color: white;
-    text-align: center;
-    padding: 2rem 1rem;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-
-header h1 {
-    margin-bottom: 0.5rem;
-}
-
-.container {
-    max-width: 800px;
-    margin: 2rem auto;
-    padding: 0 1rem;
-}
-
-.card {
-    background: white;
-    border-radius: 12px;
-    padding: 2rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    transition: all 0.3s ease;
-}
-
-h2 {
-    color: #2e5a27;
-    margin-bottom: 1rem;
-    border-bottom: 2px solid #e2e8f0;
-    padding-bottom: 0.5rem;
-}
-
-/* Estilos do Menu Inicial */
-.menu-card {
-    text-align: center;
-    padding: 3rem 2rem;
-    border: 3px solid #2e5a27;
-    background: linear-gradient(135deg, #ffffff 0%, #f0faf0 100%);
-}
-
-.menu-icon {
-    font-size: 4rem;
-    margin-bottom: 1rem;
-    animation: float 3s ease-in-out infinite;
-}
-
-.menu-subtitle {
-    font-size: 1.1rem;
-    color: #4a5568;
-    margin-bottom: 2rem;
-}
-
-.main-btn {
-    background-color: #2e5a27;
-    color: white;
-    border: none;
-    padding: 1rem 2.5rem;
-    font-size: 1.2rem;
-    font-weight: bold;
-    border-radius: 50px;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(46, 90, 39, 0.3);
-    transition: transform 0.2s, background-color 0.2s;
-}
-
-.main-btn:hover {
-    background-color: #1e3d19;
-    transform: scale(1.05);
-}
-
-@keyframes float {
-    0% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
-    100% { transform: translateY(0px); }
-}
-
-/* Estilos do Quiz */
-#question-number {
-    font-weight: bold;
-    color: #718096;
-    margin-bottom: 0.5rem;
-}
-
-#question-text {
-    font-size: 1.2rem;
-    margin-bottom: 1.5rem;
-    font-weight: 600;
-}
-
-.options-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-}
-
-.option-btn {
-    background-color: #edf2f7;
-    border: 2px solid #cbd5e0;
-    border-radius: 8px;
-    padding: 1rem;
-    text-align: left;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.option-btn:hover {
-    background-color: #e2e8f0;
-    border-color: #a0aec0;
-}
-
-.option-btn.correct {
-    background-color: #c6f6d5;
-    border-color: #38a169;
-    color: #22543d;
-}
-
-.option-btn.wrong {
-    background-color: #fed7d7;
-    border-color: #e53e3e;
-    color: #742a2a;
-}
-
-/* Estilos do Jogo */
-.hidden {
-    display: none !important;
-}
-
-.controls-hint {
-    background-color: #edf2f7;
-    padding: 0.5rem;
-    border-radius: 6px;
-    display: inline-block;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
-}
-
-#canvas-container {
-    display: flex;
-    justify-content: center;
-    margin: 1.5rem 0;
-}
-
-canvas {
-    background-color: #558b2f;
-    border: 6px solid #2e5a27;
-    border-radius: 8px;
-    display: block;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-}
-
-#game-controls {
+.game-header-flex {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.live-money-badge {
+    background-color: #15803d;
+    color: white;
+    font-size: 1.4rem;
+    font-weight: bold;
+    padding: 0.4rem 1.2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Ícone do Gatilho Hambúrguer */
+.hamburger-icon {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background-color: #1e3d19;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    z-index: 1000;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+    transition: background 0.2s;
+}
+
+.hamburger-icon:hover {
+    background-color: #2e5a27;
+}
+
+/* Menu Lateral Esquerdo (Sidebar) */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 310px;
+    height: 100%;
+    background-color: #ffffff;
+    box-shadow: 5px 0 20px rgba(0,0,0,0.2);
+    z-index: 999;
+    padding: 25px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.sidebar-header h3 {
+    color: #1e3d19;
+}
+
+.close-btn {
+    font-size: 2rem;
+    font-weight: bold;
+    cursor: pointer;
+    color: #94a3b8;
+}
+
+.close-btn:hover {
+    color: #ef4444;
+}
+
+.farm-logo-area {
+    font-size: 3.5rem;
+    text-align: center;
+    margin: 10px 0;
+    animation: float 4s ease-in-out infinite;
+}
+
+.wallet-box {
+    background: #f0fdf4;
+    border: 1px dashed #22c55e;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.wallet-box p {
+    font-size: 0.85rem;
+    color: #166534;
+}
+
+.wallet-box .money-txt {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #15803d;
+}
+
+.manual-box {
+    background-color: #f8fafc;
+    border-left: 4px solid #3b82f6;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    color: #334155;
+}
+
+.manual-box ul {
+    list-style: none;
+    margin-left: 5px;
+    margin-top: 5px;
+}
+
+.manual-box li {
+    margin-bottom: 4px;
+}
+
+.badge {
+    background: #cbd5e1;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-family: monospace;
     font-weight: bold;
 }
 
-button#restart-btn {
-    background-color: #2e5a27;
+.margin-top {
+    margin-top: 8px;
+    display: block;
+}
+
+.land-btn {
+    background-color: #f59e0b;
     color: white;
     border: none;
-    padding: 0.6rem 1.2rem;
+    padding: 10px;
+    width: 100%;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    margin-bottom: 8px;
+    font-weight: bold;
+    text-align: center;
+    transition: background 0.2s;
+}
+
+.land-btn:hover {
+    background-color: #d97706;
+}
+
+.sidebar-main-action-btn {
+    background-color: #dc2626;
+    color: white;
+    border: none;
+    padding: 12px;
+    width: 100%;
     border-radius: 6px;
     cursor: pointer;
     font-weight: bold;
+    margin-top: auto;
 }
 
-button#restart-btn:hover {
+/* Painel inferior do jogo */
+.control-panel-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+
+.vehicle-status-card .label {
+    font-size: 0.8rem;
+    color: #64748b;
+    text-transform: uppercase;
+}
+
+.vehicle-status-card .value {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #1e293b;
+}
+
+.vehicle-status-card .sub-value {
+    font-size: 0.9rem;
+    color: #475569;
+}
+
+.control-action-btn {
+    background-color: #2e5a27;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.control-action-btn:hover {
     background-color: #1e3d19;
 }
 
-footer {
-    text-align: center;
-    padding: 1.5rem;
-    background-color: #2d3748;
-    color: #a0aec0;
-    margin-top: 4rem;
+hr {
+    border: 0;
+    height: 1px;
+    background: #e2e8f0;
+    margin: 15px 0;
 }
